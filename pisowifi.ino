@@ -36,15 +36,10 @@ int promoTimeAdd2hours = 0;
 int promoTimeAdd4hours = 0;
 int promoTimeAdd18hours = 0;
 
-int timer = 0;
-
 //Counter Timer
 int counter = 0;
 int timerCounter = 0;
 int firstInsertCoin = 0;
-
-int counterInsertCoin = 0;
-int stopCounterInsertCoin = 0;
 
 int counterTest = 0;
 
@@ -52,7 +47,6 @@ int counterTest = 0;
 int coinsCountdown, codeGeneratedCountdown;
 
 int ConnectTry = 0;
-int mikrotikLogin = 0;
 
 const int ledpin = 5;
 const int coinpin = 2;
@@ -71,17 +65,23 @@ int buttonState = 0;         // current state of the button
 int lastButtonState = 0;     // previous state of the button
 
 String script;
-String reboot_script;
 
 uint32_t seed_value;
 char letters[10] = {'1', '2', '3', '4', '5', '6', '7', '8', '9', '0'};
+//char letters[10] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'};
 LiquidCrystal_I2C lcd(0x27, 20, 4);
 
 // variable to hold Ethernet shield MAC address
 byte clientMAC[] = { 0xAA, 0xBB, 0xCC, 0x00, 0xFE, 0xED };
 
 //put here your router's ip address
+IPAddress ip(192, 168, 88, 2);
 IPAddress mikrotikRouterIp (192, 168, 88, 1);
+
+IPAddress checkIP(192, 168, 88, 1);
+
+// fill in your Domain Name Server address here:
+IPAddress myDns(1, 1, 1, 1);
 
 EthernetClient clients;
 EthernetClient client;
@@ -128,9 +128,7 @@ void runSetupConnection() {
 
   ConnectTry = 0;
 
-  checkEthernet:
-  
-  while (Ethernet.begin(clientMAC) == 0) {
+  while (Ethernet.begin(clientMAC) == 0) {    
     ConnectTry += 1;
     Serial.println(ConnectTry);
     
@@ -140,13 +138,9 @@ void runSetupConnection() {
     print_txt_int(ConnectTry, 19, 0);
     
     if (ConnectTry == 3) {
-      lcd.clear();
-      print_txt("Rebooting Router", 0, 0);
-      Serial.println("Rebooting Router!");
-
-      delay(1000);
+      Serial.println("reconnecting");
       
-      goto checkEthernet;
+      goto Here;
     }
   }
 
@@ -155,6 +149,8 @@ void runSetupConnection() {
   Serial.println("Success!");
   print_txt("Success!", 0, 0);
   delay(1000);
+
+  Ethernet.begin(clientMAC, ip, myDns);
 
   //Connecting Router
   lcd.clear();
@@ -172,7 +168,6 @@ void runSetupConnection() {
     lcd.clear();
     print_txt("Success!", 0, 0);
     Serial.println("Success!");
-    
     delay(1000);
     lcd.clear();
   } else {
@@ -201,7 +196,6 @@ void coinInterrupt() {
   coins ++;
   startMillis = millis(); //initial start time
   coinsCountdown = 30;
-  stopCounterInsertCoin = 1;
 }
 
 void blinker() {
@@ -224,7 +218,9 @@ void blinker() {
 void loop() {
   currentMillis = millis();
   if (coins < 1 && gate == 0 && start == 0) {
-    if (clients.connect(mikrotikRouterIp, 23)) {
+    if (clients.connect(checkIP, 23)) {
+      char c = clients.read();
+      Serial.print(c);
       Serial.println("Router connected!!!.");
 
       insertCoin();
@@ -234,8 +230,6 @@ void loop() {
       Serial.println("Router disconnected!");
       print_txt("Router disconnected!", 0, 0);
       clients.stop();
-
-      mikrotikLogin = 1;
       
       runSetupConnection();
     }
@@ -297,17 +291,19 @@ void loop() {
     lcd.print(newmins);
     lcd.print(" min  ");
 
-    countdownFunc(1); 
-    if(coinsCountdown > 27) {
-      print_txt("            ", 4, 3);
-    } else {
-      print_txt("Press Button", 4, 3);
-      cantWaitCounterFunc();
-    }
+    print_txt("Press Button", 4, 3);
+
+    countdownFunc(1);
+    cantWaitCounterFunc();
 
     if (((coins > 0) && buttonPushCounter == 1) || coinsCountdown == 0) {
 
-      if (!clients.connect(mikrotikRouterIp, 23)) {
+      lcd.clear();
+      print_txt("Sending data", 0, 0);c:\Users\danni\Documents\MyFiles\PISO WIFI\Pisowifi\PisoWifiV5\PisoWifiV5.ino
+
+      Serial.println("Sending data");
+
+      if (!clients.connect(checkIP, 23)) {
         Serial.println("Failed!");
         print_txt("failed!", 8, 0);
         delay(1500);
@@ -319,16 +315,7 @@ void loop() {
         
         runSetupConnection();
       } 
-
-      lcd.clear();
-      print_txt("Sending data", 0, 0);
-      print_txt(".", 12, 0);
-      delay(300);
-      print_txt(".", 13, 0);
-      delay(300);
-      print_txt(".", 14, 0);
-      delay(1000);
-
+      
       seed_value = Entropy.random();
       randomSeed(seed_value);
       char C[2] = {letters[random(10)]};
@@ -349,21 +336,27 @@ void loop() {
       script += hotspotTimes;
       
       if (promoTimeAdd1hour != 0) {
-        script += " profile=hotspot2; ";
+        script += " profile=hotspot2";
       } else if (promoTimeAdd4hours != 0) {
-        script += " profile=hotspot3; ";
+        script += " profile=hotspot3";
       } else if (promoTimeAdd18hours != 0) {
-        script += " profile=hotspot4; ";
+        script += " profile=hotspot4";
       } else {
-        script += " profile=hotspot; ";
+        script += " profile=hotspot";
       }
-
-      //Schedule add name
-      script += "/system script run check_user;";
 
       int script_len = script.length() + 1;
       char mscript[script_len];
       script.toCharArray(mscript, script_len);
+      
+      tc.sendCommand(mscript);
+      Serial.println("Success!  ");
+      print_txt(".", 12, 0);
+      delay(300);
+      print_txt(".", 13, 0);
+      delay(300);
+      print_txt(".", 14, 0);
+      delay(1000);
 
       lcd.clear();
       print_txt("CODE GENERATED", 3, 0);
@@ -374,10 +367,13 @@ void loop() {
       print_txt(E, 10, 2);
       print_txt(S, 11, 2);
       print_txt(T, 12, 2);
-
-      tc.sendCommand(mscript);
-
       print_txt("Press Button", 4, 3);
+
+      Serial.println("");
+      Serial.println("CODE GENERATED");
+      Serial.println("PRESS BUTTON ");
+      Serial.println("");
+      
       codeGeneratedCountdown = 60;
       while (digitalRead(buttonpin) == LOW && (coins > 0)) {
 
@@ -415,9 +411,6 @@ void resetAllValue() {
   buttonPushCounter = 0;
   counter = 0;
   firstInsertCoin = 0;
-  counterInsertCoin = 0;
-  stopCounterInsertCoin = 0;
-  print_txt("    Insert Coin     ", 0, 1);
 }
 
 void countdownFunc(int y) {
@@ -474,24 +467,20 @@ void cantWaitCounterFunc() {
 }
 
 void insertCoin() {
-  // print_txt("    Florita WIFI    ", 0, 0);
   print_txt("ElsaSilogan PisoWIFI", 0, 0);
+  print_txt("    Insert Coin     ", 0, 1);
   print_txt("                    ", 0, 2);
-  print_txt("10=3h 20=8h 30=1day ", 0, 3);
+  print_txt("1=12m 10=3hr 20=8hr", 0, 3);
 }
 
 void insertCoinBlink() {
+  delay(500);
+  print_txt("                    ", 0, 1);
+  delay(500);
+  print_txt("    Insert Coin     ", 0, 1);
+  delay(1500);
 
-  counterInsertCoin++;
-  
-  if((counterInsertCoin < 30) && stopCounterInsertCoin == 0) {
-    print_txt("    Insert Coin     ", 0, 1);
-  } else if((counterInsertCoin >= 30 && counterInsertCoin <= 40) && stopCounterInsertCoin == 0) {
-    print_txt("                    ", 0, 1);
-  } else if(counterInsertCoin >= 40 && stopCounterInsertCoin == 0) {
-    print_txt("    Insert Coin     ", 0, 1);
-    counterInsertCoin = 0;
-  }
+  // Serial.println("Insert Coin");
 }
 
 void print_txt(const char temp[16], int x, int y) { // char to display, x,y location
