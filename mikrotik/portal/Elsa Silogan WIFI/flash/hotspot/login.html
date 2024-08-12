@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="pragma" content="no-cache" />
+    <meta http-equiv="expires" content="-1" />
+    <title>Internet Login</title>
+
+    <!-- Bootstrap -->
+    <link href="assets/css/bootstrap.min.css" rel="stylesheet">
+    <!-- custom css -->
+    <link rel="stylesheet" href="assets/css/custom.css">
+</head>
+
+<body>
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-default">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <a class="navbar-brand" href="">Elsa Silogan WIFI > Login</a>
+            </div>
+        </div>
+        <!-- /.container -->
+    </nav>
+    <!-- END NAVBAR -->
+
+    <!-- CONTENT -->
+    <section>
+        $(if chap-id)
+        <form name="sendin" action="$(link-login-only)" method="post">
+            <input type="hidden" name="username" />
+            <input type="hidden" name="password" />
+            <input type="hidden" name="dst" value="status" />
+            <input type="hidden" name="popup" value="true" />
+        </form>
+
+        <script type="text/javascript" src="assets/js/md5.js"></script>
+        <script type="text/javascript">
+            <!--
+            function doLogin() {
+                document.sendin.username.value = document.login.username.value;
+                document.sendin.password.value = hexMD5('$(chap-id)' + document.login.password.value + '$(chap-challenge)');
+                document.sendin.submit();
+                return false;
+            }
+            //-->
+        </script>
+        $(endif)
+
+        <div align="center">
+            <!--<a href="$(link-login-only)?target=lv&amp;dst=$(link-orig-esc)">Latviski</a>-->
+        </div>
+
+        <div class="container">
+            <div class="panel panel-default col-md-4 col-md-offset-4">
+                <div class=""><p style="text-align: center; padding-top: 20px;">If mag check mo sa inyong <span style="color: red; font-weight: bold">TIME</span> kay e type lang <span style="color: red;
+                    font-weight: 700;
+                    font-size: 18px;
+                    text-decoration: underline;">eswifi.net</span> sa CHROME or any Browser</p>
+                </div>
+                <div class="panel-body">
+					
+                    <h1 class="text-center">
+						<!-- <p class="" style="font-family: Brush Script MT, Brush Script Std, cursive;border: orange;color: #ffffff;font-size: 19px;margin: 0;position: relative;bottom: -28px;">Dannis</p> -->
+						<img src="assets/images/wifilogo.png" width="50%" height="50%">
+						<!-- <img src="assets/images/wifi.svg" width="50%" height="50%"> -->
+                    </h1>
+					<p align="center"><b>STATUS:</b> <b><font color="red">DISCONNECTED</font></b></p>
+
+                    <form name="login" action="$(link-login-only)" method="post" $(if chap-id) onSubmit="return doLogin()" $(endif)>
+                        <input type="hidden" name="dst" value="status" />
+                        <input type="hidden" name="popup" value="true" />
+
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-addon"><span class="glyphicon glyphicon-lock"></span></div>
+                                <input type="text" class="form-control" id="username" placeholder="Voucher Code" value="$(username)">
+								<input type="hidden" class="form-control" id="password" placeholder="Password">
+                            </div>
+                        </div>
+                        
+						<div class="form-group">
+						<button type="submit" class="btn btn-primary btn-login">Login</button>
+						<button type="button" class="btn btn-primary btn-login" data-toggle="modal" data-target="#myModal">View Rates</button>
+						$(if trial == 'yes')
+					    <button type="button" class="btn btn-primary btn-login" onclick="location.href='$(link-login-only)?dst=status &amp;username=T-$(mac-esc)';">Try Me! You have 10 Minutes</button> $(endif)
+					</form>
+					
+			        <div class="row">
+                        <div class="col-md-8 col-md-offset-2 text-center">
+                            $(if error)
+                            <script>
+                                alert("$(error)");
+                            </script>$(endif)
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+    </section>
+	<p align="center"><a href="#">© Elsa Silogan</a></p>
+	<!-- The Modal -->
+  <div class="modal" id="myModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+   
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h4 class="modal-title" style="text-align: center;">Internet RATES!</h4>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+		
+        
+        <!-- Modal body -->
+        <div class="modal-body">
+          <table class="table table-bordered">
+		     <p> Choose your desired rate!  </p>
+
+			 
+    <thead>
+      <tr>
+        <th>Price</th>
+        <th>Time</th>
+		<th>Data</th>
+      </tr>
+    </thead>
+	
+    <tbody>
+	 <tr>
+        <td>P1</td>
+        <td>12 minutes</td>
+		<td>2mb/2mb</td>
+      <tr>
+      <tr>
+		<td>P5</td>
+        <td>1 Hour</td>
+		<td>2mb/2mb</td>
+	  <tr>
+		<td>P10</td>
+        <td>3 Hours</td>
+		<td>2mb/2mb</td>
+     <tr>
+    <tr>
+        <td>P20</td>
+        <td>8 Hours</td>
+        <td>3mb/3mb</td>
+    <tr>
+    <tr>
+        <td>P30</td>
+        <td>1 Day</td>
+        <td>3mb/3mb</td>
+    <tr>
+ </tr>
+ </tr>
+      </tr>
+	  <p>  </p>
+    </tbody>
+  </table>
+		
+      </tr>
+	  <p>  </p>
+    </tbody>
+  </table>
+  <!-- <p align="center">If you want special or a customize rate, please contact &nbsp;<a href="https://www.youtube.com/channel/UC7Kk-8t778WhxcWt67aMtNQ">Karl C.</a></p> -->
+    <!-- END CONTENT -->
+
+    <script type="text/javascript">
+        <!--
+        document.login.username.focus();
+        //-->
+    </script>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="assets/js/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="assets/js/bootstrap.min.js"></script>
+	
+</body>
+
+</html>
