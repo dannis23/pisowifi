@@ -348,19 +348,6 @@ void loop() {
       script += T;
       script += " limit-uptime=";
       script += hotspotTimes;
-      
-      if (promoTimeAdd1hour != 0) {
-        script += " profile=hotspot2; ";
-      } else if (promoTimeAdd4hours != 0) {
-        script += " profile=hotspot3; ";
-      } else if (promoTimeAdd18hours != 0) {
-        script += " profile=hotspot4; ";
-      } else {
-        script += " profile=hotspot; ";
-      }
-
-      //Schedule add name
-      script += "/system script run check_user;";
 
       int script_len = script.length() + 1;
       char mscript[script_len];
