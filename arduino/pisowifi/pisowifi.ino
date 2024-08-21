@@ -5,8 +5,6 @@
 #include <TelnetClient.h>
 #include <LiquidCrystal_I2C.h>
 
-// #include <TimeLib.h>
-
 #define randomSeed(s) srandom(s)
 
 unsigned int mins = 0;
