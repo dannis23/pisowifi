@@ -298,7 +298,7 @@ void loop() {
     lcd.print(" min  ");
 
     countdownFunc(1); 
-    if(coinsCountdown > 27) {
+    if(coinsCountdown >= 29) {
       print_txt("            ", 4, 3);
     } else {
       print_txt("Press Button", 4, 3);
@@ -348,10 +348,6 @@ void loop() {
       script += " limit-uptime=";
       script += hotspotTimes;
 
-      int script_len = script.length() + 1;
-      char mscript[script_len];
-      script.toCharArray(mscript, script_len);
-
       lcd.clear();
       print_txt("CODE GENERATED", 3, 0);
       print_txt("< ---------------- >", 0, 1);
@@ -362,7 +358,11 @@ void loop() {
       print_txt(S, 11, 2);
       print_txt(T, 12, 2);
 
-      tc.sendCommand(mscript);
+      int script_len = script.length() + 1;
+      char mscript[script_len];
+      script.toCharArray(mscript, script_len);
+      
+      tc.sendCommand(mscript); //send command to router
 
       print_txt("Press Button", 4, 3);
       codeGeneratedCountdown = 60;
@@ -417,7 +417,7 @@ void countdownFunc(int y) {
         counter = 0;
         coinsCountdown --;
         
-        //Serial.println(countdown);
+        // Serial.println(coinsCountdown);
         print_txt("  ", 18, 3);
     } 
     print_txt_int(coinsCountdown, 18, 3); 
@@ -429,7 +429,7 @@ void countdownFunc(int y) {
         counter = 0;
         codeGeneratedCountdown --;
         
-        //Serial.println(countdown);
+        // Serial.println(codeGeneratedCountdown);
         print_txt("  ", 18, 3);
     }
     print_txt_int(codeGeneratedCountdown, 18, 3);
